@@ -1,0 +1,25 @@
+{
+  "name": "electron-desktop-app",
+  "version": "1.0.0",
+  "description": "Cross-platform desktop application built with Electron.js, featuring screen capture, a tray icon, and production-ready packaging",
+  "homepage": "https://github.com/Tane4ka170/electron-desktop-app#readme",
+  "bugs": {
+    "url": "https://github.com/Tane4ka170/electron-desktop-app/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tane4ka170/electron-desktop-app.git"
+  },
+  "license": "ISC",
+  "author": "Tane4ka170",
+  "type": "commonjs",
+  "main": "main.js",
+  "scripts": {
+    "start": "nodemon --ext js,html,css --exec electron .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "electron": "^38.1.2",
+    "nodemon": "^3.1.10"
+  }
+}
