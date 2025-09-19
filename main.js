@@ -1,4 +1,16 @@
-const { app, BrowserWindow } = require("electron");
+const {
+  app,
+  BrowserWindow,
+  ipcMain,
+  screen,
+  desktopCapturer,
+  shell,
+  Tray,
+  Menu,
+} = require("electron");
+const path = require("path");
+const fs = require("fs");
+const os = require("os");
 
 app.whenReady().then(() => {
   const window = new BrowserWindow({
@@ -8,6 +20,49 @@ app.whenReady().then(() => {
     },
     frame: false,
     transparent: true,
+    show: false,
   });
+  const iconPath = path.join(__dirname, "assets/camera.ico");
+  const tray = new Tray(iconPath);
+  tray.on("click", () => {
+    if (window.isVisible()) {
+      window.hide();
+    } else {
+      window.show();
+    }
+  });
+
+  const menuTemplate = [
+    {
+      label: "Quit",
+      click: () => {
+        app.quit();
+      },
+    },
+  ];
+
+  const contextMenu = Menu.buildFromTemplate(menuTemplate);
+  tray.setContextMenu(contextMenu);
+
   window.loadFile("index.html");
+
+  ipcMain.on("capture-screen", async () => {
+    const screenSize = screen.getPrimaryDisplay().workAreaSize;
+    const screens = await desktopCapturer.getSources({
+      types: ["screen"],
+      thumbnailSize: {
+        width: screenSize.width,
+        height: screenSize.height,
+      },
+    });
+
+    const img = screens[0].thumbnail.toPNG();
+    const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+    const fileName = `screenshot-${timestamp}.png`;
+    const filePath = path.join(os.homedir(), fileName);
+
+    fs.writeFile(filePath, img, (err) => {
+      shell.openExternal(`file://${filePath}`);
+    });
+  });
 });
